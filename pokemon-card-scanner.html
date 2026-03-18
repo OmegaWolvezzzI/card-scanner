@@ -27,16 +27,16 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; }
   body { overflow-x: hidden; }
- 
+
   .app { max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
- 
+
   /* Header */
   .header { margin-bottom: 1.75rem; padding-top: 0.5rem; }
   .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
   .logo { width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
   .header h1 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
   .header p { font-size: 13px; color: var(--muted); margin-left: 42px; }
- 
+
   /* Config panel */
   .config-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 16px; cursor: pointer; margin-bottom: 1rem; }
   .config-toggle span { font-size: 13px; font-weight: 500; color: var(--muted); }
@@ -56,22 +56,22 @@
   .save-btn:active { opacity: 0.85; }
   .config-note { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
   .config-saved { display: inline-block; font-size: 11px; background: rgba(74,222,128,0.15); color: var(--green); padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
- 
+
   /* Scan area */
   .scan-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem; }
   .tabs { display: flex; border-bottom: 0.5px solid var(--border); }
   .tab { flex: 1; padding: 11px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: transparent; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: color 0.15s; }
   .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); margin-bottom: -0.5px; }
- 
+
   .panel { padding: 1.25rem; }
- 
+
   /* Upload */
   #dropzone { border: 1.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 2.5rem 1rem; text-align: center; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
   #dropzone:hover, #dropzone.over { background: var(--surface2); border-color: var(--accent); }
   #dropzone .dz-icon { font-size: 28px; margin-bottom: 8px; }
   #dropzone .dz-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
   #dropzone .dz-sub { font-size: 12px; color: var(--muted); }
- 
+
   /* Camera */
   #camera-start-view { text-align: center; padding: 2rem 1rem; }
   #camera-start-view p { font-size: 13px; color: var(--muted); margin-top: 8px; }
@@ -80,7 +80,7 @@
   #canvas { display: none; }
   .cam-btns { display: flex; gap: 10px; width: 100%; }
   .cam-btns button { flex: 1; }
- 
+
   /* Buttons */
   .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 0.5px solid var(--border2); background: transparent; color: var(--text); transition: background 0.15s, opacity 0.15s; }
   .btn:hover { background: var(--surface2); }
@@ -90,7 +90,7 @@
   .btn-green { background: rgba(74,222,128,0.15); color: var(--green); border-color: rgba(74,222,128,0.3); }
   .btn-green:hover { background: rgba(74,222,128,0.22); }
   .btn-full { width: 100%; }
- 
+
   /* Queue */
   .queue-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .queue-header span { font-size: 13px; color: var(--muted); }
@@ -106,7 +106,7 @@
   .badge-error { background: rgba(255,107,107,0.15); color: var(--accent2); }
   .scan-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; }
   .scan-actions .btn { flex: 1; }
- 
+
   /* Results */
   .results-section { margin-top: 0.5rem; }
   .results-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
@@ -124,19 +124,19 @@
   .rc-link:hover { text-decoration: underline; }
   .rc-remove { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px; }
   .rc-remove:hover { color: var(--accent2); }
- 
+
   /* Push bar */
   .push-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 0.5px solid var(--border2); padding: 12px 1rem; display: flex; gap: 8px; max-width: 600px; margin: 0 auto; }
   .push-bar .btn { flex: 1; }
- 
+
   /* Toast */
   .toast { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 30px; font-size: 13px; font-weight: 500; white-space: nowrap; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 9999; pointer-events: none; }
   .toast.show { transform: translateX(-50%) translateY(0); }
- 
+
   /* Empty */
   .empty { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 13px; }
   .empty .e-icon { font-size: 32px; margin-bottom: 8px; }
- 
+
   @media (max-width: 400px) {
     .rc-prices { flex-direction: column; gap: 6px; }
   }
@@ -155,7 +155,7 @@
 </style>
 </head>
 <body>
- 
+
 <div class="app">
   <div class="header">
     <div class="header-top">
@@ -164,7 +164,7 @@
     </div>
     <p>Scan cards → identify with AI → push to Google Sheets</p>
   </div>
- 
+
   <!-- Config -->
   <button class="config-toggle" id="config-toggle" onclick="toggleConfig()">
     <span>Configuration <span id="config-saved-badge" class="config-saved" style="display:none;">Saved</span></span>
@@ -182,7 +182,7 @@
     <button class="save-btn" onclick="saveConfig()">Save Configuration</button>
     <p class="config-note">Keys are stored in your browser only — never sent anywhere except their respective APIs.</p>
   </div>
- 
+
   <!-- Scan area -->
   <div class="scan-card">
     <div class="tabs">
@@ -223,7 +223,7 @@
       </div>
     </div>
   </div>
- 
+
   <!-- Queue -->
   <div id="queue-section" style="display:none;">
     <div class="queue-header">
@@ -235,7 +235,7 @@
       <button class="btn btn-accent" onclick="scanAll()">⚡ Identify all cards</button>
     </div>
   </div>
- 
+
   <!-- Results -->
   <div id="results-section" style="display:none;" class="results-section">
     <div class="results-top">
@@ -244,27 +244,27 @@
     </div>
     <div id="results-list"></div>
   </div>
- 
+
   <div id="empty-state" class="empty" style="display:none;">
     <div class="e-icon">🃏</div>
     No cards identified yet
   </div>
 </div>
- 
+
 <!-- Push bar (shown when results exist) -->
 <div class="push-bar" id="push-bar" style="display:none;">
   <button class="btn" onclick="copyCSV()">Copy CSV</button>
   <button class="btn btn-green" onclick="pushToSheets()">Add to Google Sheets ↑</button>
 </div>
- 
+
 <div class="toast" id="toast"></div>
- 
+
 <script>
 let config = {};
 let pendingImages = [];
 let results = [];
 let mediaStream = null;
- 
+
 // Load saved config from localStorage
 (function loadConfig() {
   try {
@@ -279,14 +279,14 @@ let mediaStream = null;
     }
   } catch(e) {}
 })();
- 
+
 function toggleConfig() {
   const panel = document.getElementById('config-panel');
   const btn = document.getElementById('config-toggle');
   panel.classList.toggle('open');
   btn.classList.toggle('open');
 }
- 
+
 function saveConfig() {
   config.claudeKey = document.getElementById('claude-key').value.trim();
   config.sheetsKey = document.getElementById('gsheets-key').value.trim();
@@ -297,14 +297,14 @@ function saveConfig() {
   showToast('Configuration saved ✓');
   toggleConfig();
 }
- 
+
 function showToast(msg, duration) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), duration || 2500);
 }
- 
+
 function switchTab(tab) {
   document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
   document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
@@ -312,11 +312,11 @@ function switchTab(tab) {
   document.getElementById('panel-camera').style.display = tab === 'camera' ? 'block' : 'none';
   if (tab !== 'camera') stopCamera();
 }
- 
+
 function onDragOver(e) { e.preventDefault(); document.getElementById('dropzone').classList.add('over'); }
 function onDragLeave() { document.getElementById('dropzone').classList.remove('over'); }
 function onDrop(e) { e.preventDefault(); document.getElementById('dropzone').classList.remove('over'); handleFiles(e.dataTransfer.files); }
- 
+
 function handleFiles(files) {
   Array.from(files).forEach(file => {
     const reader = new FileReader();
@@ -325,12 +325,12 @@ function handleFiles(files) {
   });
   document.getElementById('file-input').value = '';
 }
- 
+
 function addImage(dataUrl, name) {
   pendingImages.push({ id: Date.now() + Math.random(), dataUrl, name, status: 'pending' });
   renderQueue();
 }
- 
+
 function renderQueue() {
   const section = document.getElementById('queue-section');
   const grid = document.getElementById('preview-grid');
@@ -351,7 +351,7 @@ function renderQueue() {
     </div>
   `).join('');
 }
- 
+
 async function startCamera() {
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -367,13 +367,13 @@ async function startCamera() {
     showToast('Camera error: ' + (e.message || 'Access denied'), 3500);
   }
 }
- 
+
 function stopCamera() {
   if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
   document.getElementById('camera-start-view').style.display = 'block';
   document.getElementById('camera-live-view').style.display = 'none';
 }
- 
+
 function sizeViewfinder() {
   const video = document.getElementById('video');
   const cutout = document.getElementById('vf-cutout');
@@ -386,40 +386,40 @@ function sizeViewfinder() {
   cutout.style.width = cardW + 'px';
   cutout.style.height = cardH + 'px';
 }
- 
+
 function capturePhoto() {
   const video = document.getElementById('video');
   const cutout = document.getElementById('vf-cutout');
   const canvas = document.getElementById('canvas');
- 
+
   // Get the viewfinder box position relative to the video
   const videoRect = video.getBoundingClientRect();
   const cutoutRect = cutout.getBoundingClientRect();
- 
+
   // Scale from display size to actual video resolution
   const scaleX = video.videoWidth / videoRect.width;
   const scaleY = video.videoHeight / videoRect.height;
- 
+
   const x = (cutoutRect.left - videoRect.left) * scaleX;
   const y = (cutoutRect.top - videoRect.top) * scaleY;
   const w = cutoutRect.width * scaleX;
   const h = cutoutRect.height * scaleY;
- 
+
   // Crop canvas to just the viewfinder area
   canvas.width = w;
   canvas.height = h;
   canvas.getContext('2d').drawImage(video, x, y, w, h, 0, 0, w, h);
- 
+
   const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
   addImage(dataUrl, `capture-${new Date().toISOString().slice(11,19)}.jpg`);
   showToast('Card captured ✓');
 }
- 
+
 function clearAll() {
   pendingImages = [];
   renderQueue();
 }
- 
+
 async function scanAll() {
   if (!config.claudeKey) {
     showToast('Enter your Anthropic API key in Configuration first', 3000);
@@ -429,12 +429,12 @@ async function scanAll() {
   }
   const toScan = pendingImages.filter(i => i.status === 'pending');
   if (toScan.length === 0) { showToast('No new images to scan'); return; }
- 
+
   // Mark all as scanning immediately
   toScan.forEach(img => img.status = 'scanning');
   renderQueue();
   showToast(`Scanning ${toScan.length} card${toScan.length !== 1 ? 's' : ''} in parallel…`, 3000);
- 
+
   // Scan all cards simultaneously
   const promises = toScan.map(async img => {
     try {
@@ -448,7 +448,7 @@ async function scanAll() {
     renderQueue();
     renderResults();
   });
- 
+
   await Promise.all(promises);
   const doneCount = toScan.filter(i => i.status === 'done').length;
   const errCount = toScan.filter(i => i.status === 'error').length;
@@ -458,7 +458,7 @@ async function scanAll() {
     showToast(`Done! ${doneCount} card${doneCount !== 1 ? 's' : ''} identified ✓`, 3000);
   }
 }
- 
+
 // Maps print set codes on cards to pokemontcg.io API set IDs
 const SET_CODE_MAP = {
   // Scarlet & Violet English
@@ -503,12 +503,12 @@ const SET_CODE_MAP = {
   'PRE2': 'sv8pt5',
   // Add new sets here as they release
 };
- 
+
 function resolveSetId(printCode) {
   const upper = (printCode || '').toUpperCase().trim();
   return SET_CODE_MAP[upper] || upper.toLowerCase();
 }
- 
+
 function getBestPrice(prices) {
   if (!prices) return 0;
   const candidates = [
@@ -519,11 +519,11 @@ function getBestPrice(prices) {
   ];
   return candidates.find(p => p && p > 0) || 0;
 }
- 
+
 async function identifyCard(dataUrl) {
   const base64 = dataUrl.split(',')[1];
   const mediaType = dataUrl.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
- 
+
   // Step 1: Claude reads the card details from the photo
   const t0 = Date.now();
   console.log('[Scanner] Starting Claude vision call...');
@@ -547,13 +547,13 @@ async function identifyCard(dataUrl) {
         content: [
           { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
           { type: 'text', text: `You are a Pokémon TCG expert. Examine this card image carefully and return ONLY valid JSON with no markdown or explanation.
- 
+
 CRITICAL RULES:
 - Read the EXACT text printed on the card for the name. Do NOT guess or use memory.
 - Modern Scarlet & Violet era cards use lowercase "ex" (e.g. "Charizard ex", "Salamence ex"). Older cards use uppercase "EX" or "GX". Read which one is printed.
 - Card number is at the BOTTOM of the card e.g. 187/159
 - Set code is the short abbreviation at the bottom near the number e.g. JTG, SVI, SCR, SSP
- 
+
 Return this JSON:
 {
   "name": "exact name on card including any prefix (N's, Iono's, Hop's, Lillie's) and suffix (ex, GX, V, VMAX, VSTAR) exactly as printed",
@@ -571,28 +571,38 @@ If unreadable return {"error":"unidentified"}.` }
     clearTimeout(timeout);
   }
   console.log(`[Scanner] Claude call took ${Date.now() - t0}ms`);
- 
+
   if (!resp.ok) {
     const err = await resp.json().catch(() => ({}));
     throw new Error(err.error?.message || `API error ${resp.status}`);
   }
- 
+
   const data = await resp.json();
   const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
-  const clean = text.replace(/```json|```/g, '').trim();
-  const parsed = JSON.parse(clean);
+  // Robustly extract JSON — handle markdown fences, extra text before/after
+  let parsed;
+  try {
+    // Try extracting just the JSON object using regex first
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) throw new Error('No JSON found');
+    parsed = JSON.parse(jsonMatch[0]);
+  } catch(e) {
+    // Fallback: strip fences and try again
+    const clean = text.replace(/```json|```/g, '').trim();
+    parsed = JSON.parse(clean);
+  }
   if (parsed.error) throw new Error('unidentified');
- 
+
   const rawNumber = (parsed.number || '').trim();
   const cardNumber = rawNumber.replace(/\/.*/,'').replace(/^0+/,'');
   const printCode = (parsed.set_code || '').toUpperCase().trim();
   const apiSetId = resolveSetId(printCode);
- 
+
   // Step 2: Look up card in pokemontcg.io — all queries fire in parallel with a 5s timeout
   let tcgCard = null;
   const knownMissingSets = ['sv9pt5','asc']; // sets confirmed not in pokemontcg.io yet
   const skipTCG = knownMissingSets.includes(apiSetId.toLowerCase()) || knownMissingSets.includes(printCode.toLowerCase());
- 
+
   if (!skipTCG) {
     const tcgFetch = (url) => {
       const c = new AbortController();
@@ -607,12 +617,12 @@ If unreadable return {"error":"unidentified"}.` }
         .catch(() => ({ data: [] }))
         .finally(() => clearTimeout(t));
     };
- 
+
     const nameLower = (parsed.name || '').toLowerCase();
     const firstName = nameLower.split(' ')[0];
     const baseName = parsed.name.replace(/\s*(ex|GX|V|VMAX|VSTAR|EX)$/i,'').trim();
     const suffix = (parsed.name.match(/(ex|GX|VMAX|VSTAR|V)$/i) || [''])[0].toLowerCase();
- 
+
     const queries = [];
     if (cardNumber && apiSetId) {
       queries.push(tcgFetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`number:${cardNumber} set.id:${apiSetId}`)}&pageSize=5`));
@@ -623,10 +633,10 @@ If unreadable return {"error":"unidentified"}.` }
     if (parsed.name) {
       queries.push(tcgFetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`name:"${parsed.name}"`)}&pageSize=1&orderBy=-set.releaseDate`));
     }
- 
+
     const allResults = await Promise.all(queries);
     console.log(`[Scanner] TCG API calls took — parallel`);
- 
+
     for (const res of allResults) {
       if (res.data && res.data.length > 0) {
         tcgCard = res.data.find(c => c.name.toLowerCase().includes(firstName))
@@ -638,11 +648,11 @@ If unreadable return {"error":"unidentified"}.` }
   } else {
     console.log(`[Scanner] Skipping TCG API — set ${printCode} not in database yet`);
   }
- 
+
   const setName = parsed.set_name || printCode || 'Unknown';
   const language = parsed.language || 'English';
   const isJapanese = language.toLowerCase().includes('japanese');
- 
+
   if (tcgCard) {
     const price = getBestPrice(tcgCard.tcgplayer?.prices);
     const tcgUrl = tcgCard.tcgplayer?.url
@@ -659,7 +669,7 @@ If unreadable return {"error":"unidentified"}.` }
       price_85: Math.round((parseFloat(price) || 0) * 0.85 * 100) / 100
     };
   }
- 
+
   // No TCG API match — use Claude data + precise TCGPlayer search URL
   const name = parsed.name || 'Unknown';
   return {
@@ -674,7 +684,7 @@ If unreadable return {"error":"unidentified"}.` }
     price_85: 0
   };
 }
- 
+
 function buildTCGUrl(name, setName, isJapanese, cardNumber) {
   const numOnly = (cardNumber || '').split('/')[0].replace(/^0+/, '');
   if (isJapanese) {
@@ -687,24 +697,24 @@ function buildTCGUrl(name, setName, isJapanese, cardNumber) {
     : encodeURIComponent(name + ' ' + setName);
   return `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${q}&view=grid`;
 }
- 
+
 function renderResults() {
   const section = document.getElementById('results-section');
   const empty = document.getElementById('empty-state');
   const list = document.getElementById('results-list');
   const pushBar = document.getElementById('push-bar');
- 
+
   if (results.length === 0) {
     section.style.display = 'none';
     empty.style.display = 'none';
     pushBar.style.display = 'none';
     return;
   }
- 
+
   section.style.display = 'block';
   pushBar.style.display = 'flex';
   document.getElementById('results-count').textContent = `${results.length} card${results.length !== 1 ? 's' : ''}`;
- 
+
   list.innerHTML = results.map((r, i) => `
     <div class="result-card">
       <button class="rc-remove" onclick="removeResult(${i})">×</button>
@@ -728,12 +738,12 @@ function renderResults() {
     </div>
   `).join('');
 }
- 
+
 function removeResult(i) {
   results.splice(i, 1);
   renderResults();
 }
- 
+
 function updatePrice(i, val) {
   const price = parseFloat(val) || 0;
   results[i].market_price = price;
@@ -741,7 +751,7 @@ function updatePrice(i, val) {
   const el = document.getElementById(`price85-${i}`);
   if (el) el.textContent = `$${results[i].price_85.toFixed(2)}`;
 }
- 
+
 function copyCSV() {
   if (results.length === 0) { showToast('No results yet'); return; }
   const header = 'Card Name,Set,Card Number,Rarity,Market Price,85% Price,TCGPlayer URL';
@@ -752,7 +762,7 @@ function copyCSV() {
     .then(() => showToast('CSV copied to clipboard ✓'))
     .catch(() => showToast('Copy failed — try selecting manually'));
 }
- 
+
 async function pushToSheets() {
   if (!config.sheetsKey) {
     showToast('Enter your Apps Script URL in Configuration first', 3000);
@@ -761,14 +771,14 @@ async function pushToSheets() {
     return;
   }
   if (results.length === 0) { showToast('No results to push'); return; }
- 
+
   const rows = results.map(r => [
     r.name, r.set, r.number, r.rarity,
     r.market_price, r.price_85, r.tcgplayer_url
   ]);
- 
+
   showToast('Pushing to Google Sheets…');
- 
+
   try {
     const resp = await fetch(config.sheetsKey, {
       method: 'POST',
@@ -783,4 +793,3 @@ async function pushToSheets() {
 </script>
 </body>
 </html>
- 
