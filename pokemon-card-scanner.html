@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>Pokémon Card Scanner</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #f0eff5;
+    --muted: #8886a0;
+    --accent: #ffcf44;
+    --accent2: #ff6b6b;
+    --green: #4ade80;
+    --blue: #60a5fa;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 15px; }
+  body { overflow-x: hidden; }
+
+  .app { max-width: 600px; margin: 0 auto; padding: 1.25rem 1rem 4rem; }
+
+  /* Header */
+  .header { margin-bottom: 1.75rem; padding-top: 0.5rem; }
+  .header-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+  .logo { width: 32px; height: 32px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .header h1 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
+  .header p { font-size: 13px; color: var(--muted); margin-left: 42px; }
+
+  /* Config panel */
+  .config-toggle { width: 100%; display: flex; align-items: center; justify-content: space-between; background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 16px; cursor: pointer; margin-bottom: 1rem; }
+  .config-toggle span { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .config-toggle .arrow { font-size: 11px; color: var(--muted); transition: transform 0.2s; }
+  .config-toggle.open .arrow { transform: rotate(180deg); }
+  .config-panel { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 1rem; margin-bottom: 1rem; display: none; }
+  .config-panel.open { display: block; }
+  .config-panel label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px; margin-top: 12px; }
+  .config-panel label:first-child { margin-top: 0; }
+  .config-panel input { width: 100%; background: var(--surface2); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 13px; color: var(--text); font-family: 'DM Sans', sans-serif; }
+  .config-panel input::placeholder { color: var(--muted); }
+  .config-panel input:focus { outline: none; border-color: var(--accent); }
+  .row2 { display: flex; gap: 8px; }
+  .row2 input:first-child { flex: 1; }
+  .row2 input:last-child { width: 110px; }
+  .save-btn { margin-top: 12px; width: 100%; background: var(--accent); color: #000; border: none; border-radius: var(--radius-sm); padding: 10px; font-size: 13px; font-weight: 600; font-family: 'Syne', sans-serif; cursor: pointer; letter-spacing: 0.3px; }
+  .save-btn:active { opacity: 0.85; }
+  .config-note { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+  .config-saved { display: inline-block; font-size: 11px; background: rgba(74,222,128,0.15); color: var(--green); padding: 2px 8px; border-radius: 20px; margin-left: 8px; }
+
+  /* Scan area */
+  .scan-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 1rem; }
+  .tabs { display: flex; border-bottom: 0.5px solid var(--border); }
+  .tab { flex: 1; padding: 11px; text-align: center; font-size: 13px; font-weight: 500; cursor: pointer; background: transparent; border: none; color: var(--muted); font-family: 'DM Sans', sans-serif; transition: color 0.15s; }
+  .tab.active { color: var(--accent); border-bottom: 2px solid var(--accent); margin-bottom: -0.5px; }
+
+  .panel { padding: 1.25rem; }
+
+  /* Upload */
+  #dropzone { border: 1.5px dashed var(--border2); border-radius: var(--radius-sm); padding: 2.5rem 1rem; text-align: center; cursor: pointer; transition: background 0.15s, border-color 0.15s; }
+  #dropzone:hover, #dropzone.over { background: var(--surface2); border-color: var(--accent); }
+  #dropzone .dz-icon { font-size: 28px; margin-bottom: 8px; }
+  #dropzone .dz-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  #dropzone .dz-sub { font-size: 12px; color: var(--muted); }
+
+  /* Camera */
+  #camera-start-view { text-align: center; padding: 2rem 1rem; }
+  #camera-start-view p { font-size: 13px; color: var(--muted); margin-top: 8px; }
+  #camera-live-view { display: none; flex-direction: column; align-items: center; gap: 12px; }
+  #video { width: 100%; max-height: 300px; object-fit: cover; border-radius: var(--radius-sm); background: #000; }
+  #canvas { display: none; }
+  .cam-btns { display: flex; gap: 10px; width: 100%; }
+  .cam-btns button { flex: 1; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif; cursor: pointer; border: 0.5px solid var(--border2); background: transparent; color: var(--text); transition: background 0.15s, opacity 0.15s; }
+  .btn:hover { background: var(--surface2); }
+  .btn:active { transform: scale(0.97); }
+  .btn-accent { background: var(--accent); color: #000; border-color: var(--accent); font-weight: 600; font-family: 'Syne', sans-serif; }
+  .btn-accent:hover { background: var(--accent); opacity: 0.88; }
+  .btn-green { background: rgba(74,222,128,0.15); color: var(--green); border-color: rgba(74,222,128,0.3); }
+  .btn-green:hover { background: rgba(74,222,128,0.22); }
+  .btn-full { width: 100%; }
+
+  /* Queue */
+  .queue-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .queue-header span { font-size: 13px; color: var(--muted); }
+  .preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-bottom: 1rem; }
+  .prev-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; position: relative; }
+  .prev-card img { width: 100%; height: 80px; object-fit: cover; display: block; }
+  .prev-card .prev-label { padding: 5px 6px; }
+  .prev-card .prev-name { font-size: 10px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .badge { font-size: 10px; padding: 2px 6px; border-radius: 20px; display: inline-block; margin-top: 3px; }
+  .badge-pending { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .badge-scanning { background: rgba(255,207,68,0.15); color: var(--accent); }
+  .badge-done { background: rgba(74,222,128,0.15); color: var(--green); }
+  .badge-error { background: rgba(255,107,107,0.15); color: var(--accent2); }
+  .scan-actions { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+  .scan-actions .btn { flex: 1; }
+
+  /* Results */
+  .results-section { margin-top: 0.5rem; }
+  .results-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .results-top h2 { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 600; }
+  .results-top span { font-size: 12px; color: var(--muted); }
+  .result-card { background: var(--surface); border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; position: relative; }
+  .result-card .rc-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 2px; }
+  .result-card .rc-set { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+  .rc-prices { display: flex; gap: 10px; margin-bottom: 10px; }
+  .rc-price-box { background: var(--surface2); border-radius: var(--radius-sm); padding: 8px 12px; flex: 1; }
+  .rc-price-box .plabel { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+  .rc-price-box .pval { font-size: 16px; font-weight: 600; font-family: 'Syne', sans-serif; }
+  .rc-price-box .pval.green { color: var(--green); }
+  .rc-link { font-size: 12px; color: var(--blue); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+  .rc-link:hover { text-decoration: underline; }
+  .rc-remove { position: absolute; top: 10px; right: 12px; background: none; border: none; color: var(--muted); font-size: 18px; cursor: pointer; line-height: 1; padding: 2px 4px; }
+  .rc-remove:hover { color: var(--accent2); }
+
+  /* Push bar */
+  .push-bar { position: fixed; bottom: 0; left: 0; right: 0; background: var(--surface); border-top: 0.5px solid var(--border2); padding: 12px 1rem; display: flex; gap: 8px; max-width: 600px; margin: 0 auto; }
+  .push-bar .btn { flex: 1; }
+
+  /* Toast */
+  .toast { position: fixed; top: 1rem; left: 50%; transform: translateX(-50%) translateY(-80px); background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 30px; font-size: 13px; font-weight: 500; white-space: nowrap; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 9999; pointer-events: none; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Empty */
+  .empty { text-align: center; padding: 2.5rem 1rem; color: var(--muted); font-size: 13px; }
+  .empty .e-icon { font-size: 32px; margin-bottom: 8px; }
+
+  @media (max-width: 400px) {
+    .rc-prices { flex-direction: column; gap: 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="header">
+    <div class="header-top">
+      <div class="logo">⚡</div>
+      <h1>Pokémon Card Scanner</h1>
+    </div>
+    <p>Scan cards → identify with AI → push to Google Sheets</p>
+  </div>
+
+  <!-- Config -->
+  <button class="config-toggle" id="config-toggle" onclick="toggleConfig()">
+    <span>Configuration <span id="config-saved-badge" class="config-saved" style="display:none;">Saved</span></span>
+    <span class="arrow">▼</span>
+  </button>
+  <div class="config-panel" id="config-panel">
+    <label>Anthropic API Key</label>
+    <input id="claude-key" type="password" placeholder="sk-ant-..." autocomplete="off" />
+    <label>Google Sheet ID</label>
+    <input id="sheet-id" type="text" placeholder="1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74..." />
+    <label>Sheet Tab Name</label>
+    <input id="sheet-tab" type="text" placeholder="Tab name (e.g. Cards)" />
+    <label>Google Apps Script URL</label>
+    <input id="gsheets-key" type="text" placeholder="https://script.google.com/macros/s/..." autocomplete="off" />
+    <button class="save-btn" onclick="saveConfig()">Save Configuration</button>
+    <p class="config-note">Keys are stored in your browser only — never sent anywhere except their respective APIs.</p>
+  </div>
+
+  <!-- Scan area -->
+  <div class="scan-card">
+    <div class="tabs">
+      <button class="tab active" id="tab-upload" onclick="switchTab('upload')">Upload / Gallery</button>
+      <button class="tab" id="tab-camera" onclick="switchTab('camera')">Live Camera</button>
+    </div>
+    <div class="panel" id="panel-upload">
+      <div id="dropzone" onclick="document.getElementById('file-input').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+        <div class="dz-icon">📷</div>
+        <div class="dz-title">Tap to select card photos</div>
+        <div class="dz-sub">Or drag and drop — multiple cards supported</div>
+      </div>
+      <input id="file-input" type="file" accept="image/*" multiple capture="environment" style="display:none;" onchange="handleFiles(this.files)" />
+    </div>
+    <div class="panel" id="panel-camera" style="display:none;">
+      <div id="camera-start-view">
+        <button class="btn btn-accent btn-full" onclick="startCamera()">Start Camera</button>
+        <p>Point at a card and tap Capture</p>
+      </div>
+      <div id="camera-live-view">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="canvas"></canvas>
+        <div class="cam-btns">
+          <button class="btn btn-accent" onclick="capturePhoto()">📸 Capture card</button>
+          <button class="btn" onclick="stopCamera()">Stop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Queue -->
+  <div id="queue-section" style="display:none;">
+    <div class="queue-header">
+      <span id="queue-label">0 images queued</span>
+      <button class="btn" style="padding:6px 12px;font-size:12px;" onclick="clearAll()">Clear all</button>
+    </div>
+    <div class="preview-grid" id="preview-grid"></div>
+    <div class="scan-actions">
+      <button class="btn btn-accent" onclick="scanAll()">⚡ Identify all cards</button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div id="results-section" style="display:none;" class="results-section">
+    <div class="results-top">
+      <h2>Identified cards</h2>
+      <span id="results-count"></span>
+    </div>
+    <div id="results-list"></div>
+  </div>
+
+  <div id="empty-state" class="empty" style="display:none;">
+    <div class="e-icon">🃏</div>
+    No cards identified yet
+  </div>
+</div>
+
+<!-- Push bar (shown when results exist) -->
+<div class="push-bar" id="push-bar" style="display:none;">
+  <button class="btn" onclick="copyCSV()">Copy CSV</button>
+  <button class="btn btn-green" onclick="pushToSheets()">Add to Google Sheets ↑</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let config = {};
+let pendingImages = [];
+let results = [];
+let mediaStream = null;
+
+// Load saved config from localStorage
+(function loadConfig() {
+  try {
+    const saved = localStorage.getItem('pkm_scanner_config');
+    if (saved) {
+      config = JSON.parse(saved);
+      if (config.claudeKey) document.getElementById('claude-key').value = config.claudeKey;
+      document.getElementById('gsheets-key').value = config.sheetsKey || 'https://script.google.com/macros/s/AKfycbx35BBdTlsz-83rVv_BhR153ZFytf6LxRRTSFWiPjMmgjm6icRu6NR7orzMm6W5lfYAgg/exec';
+      if (config.sheetId) document.getElementById('sheet-id').value = config.sheetId;
+      if (config.sheetTab) document.getElementById('sheet-tab').value = config.sheetTab;
+      document.getElementById('config-saved-badge').style.display = 'inline-block';
+    }
+  } catch(e) {}
+})();
+
+function toggleConfig() {
+  const panel = document.getElementById('config-panel');
+  const btn = document.getElementById('config-toggle');
+  panel.classList.toggle('open');
+  btn.classList.toggle('open');
+}
+
+function saveConfig() {
+  config.claudeKey = document.getElementById('claude-key').value.trim();
+  config.sheetsKey = document.getElementById('gsheets-key').value.trim();
+  config.sheetId = document.getElementById('sheet-id').value.trim();
+  config.sheetTab = document.getElementById('sheet-tab').value.trim() || 'Cards';
+  try { localStorage.setItem('pkm_scanner_config', JSON.stringify(config)); } catch(e) {}
+  document.getElementById('config-saved-badge').style.display = 'inline-block';
+  showToast('Configuration saved ✓');
+  toggleConfig();
+}
+
+function showToast(msg, duration) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration || 2500);
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
+  document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
+  document.getElementById('panel-upload').style.display = tab === 'upload' ? 'block' : 'none';
+  document.getElementById('panel-camera').style.display = tab === 'camera' ? 'block' : 'none';
+  if (tab !== 'camera') stopCamera();
+}
+
+function onDragOver(e) { e.preventDefault(); document.getElementById('dropzone').classList.add('over'); }
+function onDragLeave() { document.getElementById('dropzone').classList.remove('over'); }
+function onDrop(e) { e.preventDefault(); document.getElementById('dropzone').classList.remove('over'); handleFiles(e.dataTransfer.files); }
+
+function handleFiles(files) {
+  Array.from(files).forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => addImage(e.target.result, file.name);
+    reader.readAsDataURL(file);
+  });
+  document.getElementById('file-input').value = '';
+}
+
+function addImage(dataUrl, name) {
+  pendingImages.push({ id: Date.now() + Math.random(), dataUrl, name, status: 'pending' });
+  renderQueue();
+}
+
+function renderQueue() {
+  const section = document.getElementById('queue-section');
+  const grid = document.getElementById('preview-grid');
+  if (pendingImages.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  document.getElementById('queue-label').textContent = `${pendingImages.length} image${pendingImages.length !== 1 ? 's' : ''} queued`;
+  grid.innerHTML = pendingImages.map(img => `
+    <div class="prev-card">
+      <img src="${img.dataUrl}" alt="card" />
+      <div class="prev-label">
+        <div class="prev-name">${img.name || 'Photo'}</div>
+        <span class="badge badge-${img.status}">${
+          img.status === 'pending' ? 'Ready' :
+          img.status === 'scanning' ? 'Scanning…' :
+          img.status === 'done' ? 'Done' : 'Error'
+        }</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function startCamera() {
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    document.getElementById('video').srcObject = mediaStream;
+    document.getElementById('camera-start-view').style.display = 'none';
+    document.getElementById('camera-live-view').style.display = 'flex';
+  } catch(e) {
+    showToast('Camera error: ' + (e.message || 'Access denied'), 3500);
+  }
+}
+
+function stopCamera() {
+  if (mediaStream) { mediaStream.getTracks().forEach(t => t.stop()); mediaStream = null; }
+  document.getElementById('camera-start-view').style.display = 'block';
+  document.getElementById('camera-live-view').style.display = 'none';
+}
+
+function capturePhoto() {
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+  addImage(dataUrl, `capture-${new Date().toISOString().slice(11,19)}.jpg`);
+  showToast('Card captured ✓');
+}
+
+function clearAll() {
+  pendingImages = [];
+  renderQueue();
+}
+
+async function scanAll() {
+  if (!config.claudeKey) {
+    showToast('Enter your Anthropic API key in Configuration first', 3000);
+    document.getElementById('config-panel').classList.add('open');
+    document.getElementById('config-toggle').classList.add('open');
+    return;
+  }
+  const toScan = pendingImages.filter(i => i.status === 'pending');
+  if (toScan.length === 0) { showToast('No new images to scan'); return; }
+
+  for (const img of toScan) {
+    img.status = 'scanning';
+    renderQueue();
+    try {
+      const result = await identifyCard(img.dataUrl);
+      img.status = 'done';
+      results.push({ ...result, imgId: img.id });
+    } catch(e) {
+      img.status = 'error';
+      console.error('Scan error:', e);
+    }
+    renderQueue();
+    renderResults();
+  }
+  showToast(`Done! ${results.length} card${results.length !== 1 ? 's' : ''} identified`);
+}
+
+async function identifyCard(dataUrl) {
+  const base64 = dataUrl.split(',')[1];
+  const mediaType = dataUrl.startsWith('data:image/png') ? 'image/png' : 'image/jpeg';
+
+  // Step 1: Claude reads the card number and set code from the photo
+  const resp = await fetch('https://pokemon-proxy.omegabytei.workers.dev', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': config.claudeKey,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 500,
+      messages: [{
+        role: 'user',
+        content: [
+          { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
+          { type: 'text', text: `Look at this Pokémon card carefully. Find and return ONLY valid JSON with no markdown:
+{
+  "name": "Pokémon name plus any suffix (V, VMAX, VSTAR, EX, GX, ex, Radiant, Prism Star, etc)",
+  "number": "the collector number printed at the bottom of the card e.g. 025/165 or 199/198",
+  "set_code": "the 2-5 letter set code printed near the number e.g. SVI, PAR, OBF, MEW, TWM, SCR, SSP, PRE"
+}
+The card number and set code are always printed at the bottom of the card. Read them carefully. If truly unreadable return {"error": "unidentified"}.` }
+        ]
+      }]
+    })
+  });
+
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${resp.status}`);
+  }
+
+  const data = await resp.json();
+  const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  const parsed = JSON.parse(clean);
+  if (parsed.error) throw new Error('unidentified');
+
+  const cardNumber = (parsed.number || '').replace(/\/.*/,'').replace(/^0+/,'');
+  const setCode = (parsed.set_code || '').toUpperCase();
+
+  // Step 2: Look up the exact card in the Pokémon TCG API
+  let tcgCard = null;
+  if (cardNumber && setCode) {
+    try {
+      const query = encodeURIComponent(`number:${cardNumber} set.id:${setCode.toLowerCase()}`);
+      const tcgResp = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}&pageSize=1`);
+      const tcgData = await tcgResp.json();
+      if (tcgData.data && tcgData.data.length > 0) {
+        tcgCard = tcgData.data[0];
+      }
+    } catch(e) {
+      console.warn('TCG API lookup failed, falling back to name search', e);
+    }
+  }
+
+  // Fallback: search by name if number lookup failed
+  if (!tcgCard && parsed.name) {
+    try {
+      const query = encodeURIComponent(`name:"${parsed.name}"`);
+      const tcgResp = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}&pageSize=1&orderBy=-set.releaseDate`);
+      const tcgData = await tcgResp.json();
+      if (tcgData.data && tcgData.data.length > 0) tcgCard = tcgData.data[0];
+    } catch(e) { console.warn('TCG name search failed', e); }
+  }
+
+  if (tcgCard) {
+    const price = tcgCard.tcgplayer?.prices?.holofoil?.market
+      || tcgCard.tcgplayer?.prices?.normal?.market
+      || tcgCard.tcgplayer?.prices?.reverseHolofoil?.market
+      || tcgCard.tcgplayer?.prices?.['1stEditionHolofoil']?.market
+      || tcgCard.tcgplayer?.prices?.unlimitedHolofoil?.market
+      || 0;
+    const tcgUrl = tcgCard.tcgplayer?.url || `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${encodeURIComponent(tcgCard.name)}&view=grid`;
+    return {
+      name: tcgCard.name,
+      set: tcgCard.set?.name || parsed.set || 'Unknown',
+      set_code: tcgCard.set?.id?.toUpperCase() || setCode,
+      number: tcgCard.number || cardNumber,
+      rarity: tcgCard.rarity || '',
+      tcgplayer_url: tcgUrl,
+      market_price: parseFloat(price) || 0,
+      price_85: Math.round((parseFloat(price) || 0) * 0.85 * 100) / 100
+    };
+  }
+
+  // Final fallback: use Claude's data only
+  const name = parsed.name || 'Unknown';
+  return {
+    name,
+    set: parsed.set || 'Unknown',
+    set_code: setCode,
+    number: parsed.number || '',
+    rarity: '',
+    tcgplayer_url: `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${encodeURIComponent(name)}&view=grid`,
+    market_price: 0,
+    price_85: 0
+  };
+}
+
+function renderResults() {
+  const section = document.getElementById('results-section');
+  const empty = document.getElementById('empty-state');
+  const list = document.getElementById('results-list');
+  const pushBar = document.getElementById('push-bar');
+
+  if (results.length === 0) {
+    section.style.display = 'none';
+    empty.style.display = 'none';
+    pushBar.style.display = 'none';
+    return;
+  }
+
+  section.style.display = 'block';
+  pushBar.style.display = 'flex';
+  document.getElementById('results-count').textContent = `${results.length} card${results.length !== 1 ? 's' : ''}`;
+
+  list.innerHTML = results.map((r, i) => `
+    <div class="result-card">
+      <button class="rc-remove" onclick="removeResult(${i})">×</button>
+      <div class="rc-name">${r.name}</div>
+      <div class="rc-set">${r.set}${r.number ? ' · ' + r.number : ''}${r.rarity ? ' · ' + r.rarity : ''}</div>
+      <div class="rc-prices">
+        <div class="rc-price-box">
+          <div class="plabel">Market price</div>
+          <div class="pval">$${r.market_price.toFixed(2)}</div>
+        </div>
+        <div class="rc-price-box">
+          <div class="plabel">85% price</div>
+          <div class="pval green">$${r.price_85.toFixed(2)}</div>
+        </div>
+      </div>
+      <a class="rc-link" href="${r.tcgplayer_url}" target="_blank" rel="noopener">🔗 View on TCGPlayer</a>
+    </div>
+  `).join('');
+}
+
+function removeResult(i) {
+  results.splice(i, 1);
+  renderResults();
+}
+
+function copyCSV() {
+  if (results.length === 0) { showToast('No results yet'); return; }
+  const header = 'Card Name,Set,Card Number,Rarity,Market Price,85% Price,TCGPlayer URL';
+  const rows = results.map(r =>
+    `"${r.name}","${r.set}","${r.number}","${r.rarity}","$${r.market_price.toFixed(2)}","$${r.price_85.toFixed(2)}","${r.tcgplayer_url}"`
+  );
+  navigator.clipboard.writeText([header, ...rows].join('\n'))
+    .then(() => showToast('CSV copied to clipboard ✓'))
+    .catch(() => showToast('Copy failed — try selecting manually'));
+}
+
+async function pushToSheets() {
+  if (!config.sheetsKey) {
+    showToast('Enter your Apps Script URL in Configuration first', 3000);
+    document.getElementById('config-panel').classList.add('open');
+    document.getElementById('config-toggle').classList.add('open');
+    return;
+  }
+  if (results.length === 0) { showToast('No results to push'); return; }
+
+  const rows = results.map(r => [
+    r.name, r.set, r.number, r.rarity,
+    r.market_price, r.price_85, r.tcgplayer_url
+  ]);
+
+  showToast('Pushing to Google Sheets…');
+
+  try {
+    const resp = await fetch(config.sheetsKey, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify({ rows, tab: config.sheetTab || 'Cards' })
+    });
+    showToast(`✓ ${results.length} card${results.length !== 1 ? 's' : ''} added to Google Sheets!`, 3000);
+  } catch(e) {
+    showToast('Network error — check your connection', 3000);
+  }
+}
+</script>
+</body>
+</html>
