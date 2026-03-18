@@ -536,7 +536,7 @@ If unreadable return {"error":"unidentified"}.` }
 
   // Step 2: Look up card in pokemontcg.io — all queries fire in parallel with a 5s timeout
   let tcgCard = null;
-  const knownMissingSets = ['sv9','jtg','sv9pt5','asc']; // sets not yet in pokemontcg.io
+  const knownMissingSets = ['sv9pt5','asc']; // sets confirmed not in pokemontcg.io yet
   const skipTCG = knownMissingSets.includes(apiSetId.toLowerCase()) || knownMissingSets.includes(printCode.toLowerCase());
 
   if (!skipTCG) {
@@ -592,7 +592,7 @@ If unreadable return {"error":"unidentified"}.` }
   if (tcgCard) {
     const price = getBestPrice(tcgCard.tcgplayer?.prices);
     const tcgUrl = tcgCard.tcgplayer?.url
-      || buildTCGUrl(tcgCard.name, tcgCard.set?.name || setName, isJapanese);
+      || buildTCGUrl(tcgCard.name, tcgCard.set?.name || setName, isJapanese, rawNumber || tcgCard.number);
     return {
       name: tcgCard.name,
       set: tcgCard.set?.name || setName,
@@ -615,18 +615,22 @@ If unreadable return {"error":"unidentified"}.` }
     number: rawNumber,
     rarity: '',
     language,
-    tcgplayer_url: buildTCGUrl(name, setName, isJapanese),
+    tcgplayer_url: buildTCGUrl(name, setName, isJapanese, rawNumber),
     market_price: 0,
     price_85: 0
   };
 }
 
-function buildTCGUrl(name, setName, isJapanese) {
+function buildTCGUrl(name, setName, isJapanese, cardNumber) {
+  const numOnly = (cardNumber || '').split('/')[0].replace(/^0+/, '');
   if (isJapanese) {
-    const q = encodeURIComponent(name + ' ' + setName);
+    const q = encodeURIComponent(name + (setName ? ' ' + setName : ''));
     return `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&Language=Japanese&q=${q}&view=grid`;
   }
-  const q = encodeURIComponent(name + ' ' + setName);
+  // Use card number in search for precise matching
+  const q = numOnly
+    ? encodeURIComponent(name + ' ' + setName + ' ' + numOnly)
+    : encodeURIComponent(name + ' ' + setName);
   return `https://www.tcgplayer.com/search/pokemon/product?productLineName=pokemon&q=${q}&view=grid`;
 }
 
