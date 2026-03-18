@@ -143,6 +143,15 @@
   .lang-badge { font-size: 10px; background: rgba(250,204,21,0.15); color: #facc15; padding: 2px 6px; border-radius: 20px; font-weight: 500; vertical-align: middle; }
   .price-input { width: 100%; background: var(--surface); border: 0.5px solid var(--border2); border-radius: var(--radius-sm); padding: 5px 8px; font-size: 14px; font-weight: 600; color: var(--text); font-family: "Syne", sans-serif; }
   .price-input::placeholder { color: var(--muted); font-weight: 400; font-size: 12px; }
+  .video-wrapper { position: relative; width: 100%; border-radius: var(--radius-sm); overflow: hidden; background: #000; }
+  .viewfinder { position: absolute; inset: 0; pointer-events: none; }
+  .vf-cutout { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid var(--accent); border-radius: 6px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.52); }
+  .vf-corner { position: absolute; width: 14px; height: 14px; border-color: var(--accent); border-style: solid; }
+  .vf-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
+  .vf-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
+  .vf-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
+  .vf-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
+  .vf-label { position: absolute; bottom: -24px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--accent); white-space: nowrap; font-weight: 500; }
 </style>
 </head>
 <body>
@@ -194,7 +203,18 @@
         <p>Point at a card and tap Capture</p>
       </div>
       <div id="camera-live-view">
-        <video id="video" autoplay playsinline muted></video>
+        <div class="video-wrapper" id="video-wrapper">
+          <video id="video" autoplay playsinline muted style="width:100%;display:block;"></video>
+          <div class="viewfinder" id="viewfinder">
+            <div class="vf-cutout" id="vf-cutout">
+              <div class="vf-corner tl"></div>
+              <div class="vf-corner tr"></div>
+              <div class="vf-corner bl"></div>
+              <div class="vf-corner br"></div>
+              <div class="vf-label">Align card here</div>
+            </div>
+          </div>
+        </div>
         <canvas id="canvas"></canvas>
         <div class="cam-btns">
           <button class="btn btn-accent" onclick="capturePhoto()">📸 Capture card</button>
@@ -337,9 +357,12 @@ async function startCamera() {
     mediaStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
     });
-    document.getElementById('video').srcObject = mediaStream;
+    const vid = document.getElementById('video');
+    vid.srcObject = mediaStream;
+    vid.onloadedmetadata = () => { setTimeout(sizeViewfinder, 100); };
     document.getElementById('camera-start-view').style.display = 'none';
     document.getElementById('camera-live-view').style.display = 'flex';
+    setTimeout(sizeViewfinder, 300);
   } catch(e) {
     showToast('Camera error: ' + (e.message || 'Access denied'), 3500);
   }
@@ -351,12 +374,43 @@ function stopCamera() {
   document.getElementById('camera-live-view').style.display = 'none';
 }
 
+function sizeViewfinder() {
+  const video = document.getElementById('video');
+  const cutout = document.getElementById('vf-cutout');
+  if (!cutout || !video.offsetWidth) return;
+  // TCG card ratio is 2.5 x 3.5 inches = 5:7
+  const vw = video.offsetWidth;
+  const vh = video.offsetHeight || vw * 1.2;
+  const cardW = Math.round(Math.min(vw * 0.72, vh * (5/7)));
+  const cardH = Math.round(cardW * (7/5));
+  cutout.style.width = cardW + 'px';
+  cutout.style.height = cardH + 'px';
+}
+
 function capturePhoto() {
   const video = document.getElementById('video');
+  const cutout = document.getElementById('vf-cutout');
   const canvas = document.getElementById('canvas');
-  canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+
+  // Get the viewfinder box position relative to the video
+  const videoRect = video.getBoundingClientRect();
+  const cutoutRect = cutout.getBoundingClientRect();
+
+  // Scale from display size to actual video resolution
+  const scaleX = video.videoWidth / videoRect.width;
+  const scaleY = video.videoHeight / videoRect.height;
+
+  const x = (cutoutRect.left - videoRect.left) * scaleX;
+  const y = (cutoutRect.top - videoRect.top) * scaleY;
+  const w = cutoutRect.width * scaleX;
+  const h = cutoutRect.height * scaleY;
+
+  // Crop canvas to just the viewfinder area
+  canvas.width = w;
+  canvas.height = h;
+  canvas.getContext('2d').drawImage(video, x, y, w, h, 0, 0, w, h);
+
+  const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
   addImage(dataUrl, `capture-${new Date().toISOString().slice(11,19)}.jpg`);
   showToast('Card captured ✓');
 }
